@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Payment Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+            rel="stylesheet"
+    />
+    <style>
+        body {
+            background-color: #1c1c1c;
+            margin: 0;
+            padding: 20px;
+            font-family: "Roboto", sans-serif;
+        }
+
+        h2 {
+            color: #ffd600;
+            margin-top: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #ffd600;
+        }
+
+        select,
+        input {
+            padding: 8px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #ffde59;
+            color: black;
+            font-size: 16px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            transition: all 0.4s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #000;
+            color: #ffde59;
+            border: 1px solid #ffde59;
+            font-weight: 500;
+            transition: all .3s ease-in-out;
+        }
+        .p {
+            color: green;
+            font-size: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 80px;
+            font-weight: bolder;
+        }
+        .logo {
+            width: 150px;
+            height: 150px;
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            margin-top: -35px;
+            margin-left: -25px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="logo">
+    <a href="/home"><img src="./images/Bee_hive_logo_template_illustration-removebg-preview.png"alt=""/></a>
+</div>
+<h2 id="h2">Welcome to the Payment Page</h2>
+
+<div th:if="${param.error_no_default_account}">
+    <p style="color: red">Error: No default account found for the user.</p>
+</div>
+
+<form id="paymentForm" th:action="@{/payment}" th:method="post">
+    <label for="type_id">Select the payment destination:</label>
+    <select id="type_id" name="type_id" required>
+        <option value="" disabled selected>Choose one of them:</option>
+        <option value="3">Azərişıq</option>
+        <option value="4">Azəriqaz</option>
+    </select>
+
+    <label for="money">Amount:</label>
+    <input type="text" id="money" name="money" required />
+
+    <button type="submit" onclick="confirmPayment()">Make Payment</button>
+</form>
+
+<div id="successMessage" style="display: none" th:if="${param.success}">
+    <p class="p">Payment successful!</p>
+</div>
+
+<script>
+    function confirmPayment() {
+        var userInput = window.prompt(
+            "Are you sure you want to make the payment? (Type 'yes' to confirm)"
+        );
+
+        if (userInput && userInput.toLowerCase() === "yes") {
+            showSuccessMessage();
+        } else {
+            alert("Emeliyyat leğv edildi");
+        }
+    }
+
+    function showSuccessMessage() {
+        var successMessageDiv = document.getElementById("successMessage");
+        var paymentForm = document.getElementById("paymentForm");
+        var h2 = document.getElementById("h2");
+
+        successMessageDiv.style.display = "block";
+        paymentForm.style.display = "none";
+        h2.style.display = "none";
+        setTimeout(function () {
+            successMessageDiv.style.display = "none";
+            paymentForm.style.display = "block";
+            h2.style.display = "block";
+        }, 10000);
+    }
+</script>
+</body>
+</html>

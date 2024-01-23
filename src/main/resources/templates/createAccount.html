@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+3:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style4.css">
+    <title>Bank Account Application</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="imgbee">
+        <a href="/home"><img src="./images/Bee_hive_logo_template_illustration-removebg-preview.png" alt=""></a>
+    </div>
+    <div class="main">
+
+        <form action="/createAccount" method="post">
+            <h2>Bank Account Application</h2>
+        
+            <div class="box">
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="first-name" required>
+            </div>
+        
+            <div class="box">
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="last-name" required>
+            </div>
+        
+            <div class="birth">
+                <label for="birth-date">Date of Birth:</label>
+                <input type="date" id="birth-date" name="birth-date" required>
+            </div>
+        
+            <div class="box">
+                <label for="id-number">FIN Code or Passport Number:</label>
+                <input type="text" id="id-number" name="id-number" required>
+            </div>
+        
+            <div class="address">
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" required></textarea>
+            </div>
+        
+            <div class="box">
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+        
+            <div class="box">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+        
+            <div class="box">
+                <label for="income">Income Status:</label>
+                <input type="text" id="income" name="income" required>
+            </div>
+        
+            <div class="box">
+                <label for="occupation">Occupation:</label>
+                <input type="text" id="occupation" name="occupation" required>
+            </div>
+        
+            <div class="box">
+                <label for="assets">Asset Status (e.g., real estate, vehicles):</label>
+                <input type="text" id="assets" name="assets" required>
+            </div>
+        
+            <div class="acctype">
+                <label for="account-type">Account Type:</label>
+                <select id="account-type" name="account-type" required>
+                    <option value="checking">Checking Account</option>
+                    <option value="savings">Savings Account</option>
+                    <option value="cd">Certificate of Deposit</option>
+                </select>
+            </div>
+        
+            <div class="box">
+                <label for="credit-card-type">Credit Card Type:</label>
+                <input type="text" id="credit-card-type" name="credit-card-type">
+            </div>
+        
+            <div class="box">
+                <label for="reference">Reference Person:</label>
+                <input type="text" id="reference" name="reference">
+            </div>
+        
+        
+            <div class="box">
+                <label for="signature">Signature:</label>
+                <input type="text" id="signature" name="signature" required>
+            </div>
+        
+            <div class="button">
+                <button class="button-sub" type="submit">Submit Application</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+3:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style3.css">
+    <title>User Accounts</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <a href="/home"><img src="./images/Bee_hive_logo_template_illustration-removebg-preview.png    " alt=""></a>
+    </div>
+    <a href=""></a>
+    <div class="box">
+        <div class="acc">
+            <div th:if="${user != null}">
+                <div class="acc-header">
+                    <p>Welcome, <span th:text="${user.username}"></span>!</p>
+
+                    <h3>Your Accounts:</h3>
+                </div>
+                <ul>
+                    <li th:each="account : ${user.accountList}">
+                        <span th:text="${account.accountNumber}"></span> - <span th:text="${account.balance}"></span>
+                    </li>
+                </ul>
+
+                <form th:action="@{/default}" method="post">
+                    <label for="accountId" class="custom-label">Select Default Account:</label>
+                    <select class="selectacc" id="accountId" name="id" required >
+                        <option th:each="account : ${user.accountList}" th:value="${account.id}" th:text="${account.accountNumber}"></option>
+                    </select>
+                    <br>
+                    <div class="acc-bttn">
+                        <button class="acc-bttn_h" type="submit">Set Default Account</button>
+                    </div>
+                </form>
+
+                <div class="acc-bot" th:if="${param.success}">
+                    <p>Default account set successfully !</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom">
+            <h2>Card Information</h2>
+            <p>Account Number: <span th:text="${account.accountNumber}"></span></p>
+            <p>CVV Number: <span th:text="${account.cvvNumber}"></span></p>
+            <p>Date: <span th:text="${account.date}"></span></p>
+            <p>Balance: <span th:text="${account.balance}"></span></p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

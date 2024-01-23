@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+3:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Login</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="container">
+  <div class="imgbee">
+    <a href="/home"><img src="./images/Bee_hive_logo_template_illustration-removebg-preview.png" alt=""></a>
+  </div>
+  <div class="main">
+    <h2>Login</h2>
+    <p th:if="${alreadyLoggedIn}" class="error">You are already logged in.</p>
+    <form action="#" th:action="@{/login}" method="post">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" value=""/>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" value=""/>
+
+      <div class="button">
+        <button class="button-d" type="submit">Login</button>
+      </div>
+    </form>
+
+    <p th:if="${param.error}" class="error">Invalid username or password.</p>
+    <p th:if="${logout}" class="success">[[${logout}]]</p>
+  </div>
+</div>
+
+
+
+</body>
+</html>
