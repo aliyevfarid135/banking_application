@@ -15,7 +15,7 @@ public class PaymentController {
 
     @Autowired
     private AccountRepository accountRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
 
@@ -25,28 +25,33 @@ public class PaymentController {
     }
 
     @PostMapping
-    public String doPayment(@RequestParam(name = "type_id") Long type_id,
+    public String doPayment(@RequestParam(name = "type_id") Long typeId,
                            @RequestParam(name = "money") Long money) {
-        String authentication = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(authentication);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username);
+
         if (user.getDefaultAccount() == null) {
             return "error_no_default_account";
         }
 
         Account userAccount = user.getDefaultAccount();
-        List<Account> list = accountRepository.findAll();
-        for (Account a : list) {
-            if (a.getUser().getIsPayment() && a.getId().equals(type_id)) {
-                Double balance = a.getBalance();
-                balance += money;
-                a.setBalance(balance);
 
-                Double userBalance = userAccount.getBalance();
-                userBalance -= money;
-                userAccount.setBalance(userBalance);
-                accountRepository.save(userAccount);
-            }
+        Account targetAccount = accountRepository.findById(typeId).orElse(null);
+
+        if (targetAccount == null || !targetAccount.getUser().getIsPayment()) {
+            return "error_invalid_account";
         }
+
+        if (userAccount.getBalance() < money) {
+            return "error_insufficient_balance";
+        }
+
+        targetAccount.setBalance(targetAccount.getBalance() + money);
+        userAccount.setBalance(userAccount.getBalance() - money);
+
+        accountRepository.save(targetAccount);
+        accountRepository.save(userAccount);
+
         return "redirect:payment?success";
     }
 }
