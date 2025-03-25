@@ -9,9 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/transaction")
@@ -33,74 +32,71 @@ public class TransactionController {
 
     @PostMapping("/terminal")
     public String increaseBalance(@RequestParam(name = "cardNumber") String cardNumber,
-                                 @RequestParam(name = "money") String money) {
-        long n = 0;
-        for (Account a : accountRepository.findAll()) {
-            if (a.getAccountNumber().equals(cardNumber)) {
-                Double balance = a.getBalance();
-                balance += Double.valueOf(money);
-                a.setBalance(balance);
-                n = a.getId();
-                accountRepository.save(a);
-            }
+                                  @RequestParam(name = "money") String money) {
+        Optional<Account> optionalAccount = accountRepository.findByAccountNumber(cardNumber);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            double amount = Double.parseDouble(money);
+            account.setBalance(account.getBalance() + amount);
+            accountRepository.save(account);
+            createTransaction(account.getId(), amount, userRepository.getById(2L));
+            return "redirect:terminal?success";
+        } else {
+            return "error_account_not_found";
         }
-        createTransaction(n, Double.valueOf(money), userRepository.getById(2L));
-        return "redirect:terminal?success";
     }
 
     @GetMapping("/transfer")
-    public String getKocurme() {
+    public String getTransferPage() {
         return "transfer";
     }
 
     @PostMapping("/transfer")
-    public String doKocurme(@RequestParam(name = "cardNumber") String cardNumber,
-                           @RequestParam(name = "money") String money) {
+    public String doTransfer(@RequestParam(name = "cardNumber") String cardNumber,
+                             @RequestParam(name = "money") String money) {
         String authentication = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(authentication);
-        long n = 0;
-        for (Account a : accountRepository.findAll()) {
-            if (a.getAccountNumber().equals(cardNumber)) {
-                Double balance = a.getBalance();
-                balance += Double.valueOf(money);
-                a.setBalance(balance);
-                n = a.getId();
-                Double sender_balance = user.getDefaultAccount().getBalance();
-                sender_balance -= Double.valueOf(money);
-                user.getDefaultAccount().setBalance(sender_balance);
-                accountRepository.save(a);
+        
+        Optional<Account> optionalReceiverAccount = accountRepository.findByAccountNumber(cardNumber);
+        if (optionalReceiverAccount.isPresent() && user.getDefaultAccount() != null) {
+            Account receiverAccount = optionalReceiverAccount.get();
+            double amount = Double.parseDouble(money);
+            double senderBalance = user.getDefaultAccount().getBalance();
+
+            if (senderBalance >= amount) {
+                receiverAccount.setBalance(receiverAccount.getBalance() + amount);
+                user.getDefaultAccount().setBalance(senderBalance - amount);
+
+                accountRepository.save(receiverAccount);
                 accountRepository.save(user.getDefaultAccount());
+                
+                createTransaction(receiverAccount.getId(), amount, user);
+                return "redirect:transfer?success";
+            } else {
+                return "error_insufficient_balance";
             }
+        } else {
+            return "error_account_not_found";
         }
-        createTransaction(n, Double.valueOf(money), user);
-        return "redirect:transfer?success";
     }
 
     private void createTransaction(long receiverAccountId, double amount, User sender) {
         Transaction transaction = new Transaction();
-        transaction.setReceiver(accountRepository.getById(receiverAccountId).getUser());
-        transaction.setAmount(amount);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        Date date;
-        try {
-            date = dateFormat.parse("01/01/2024");
-        } catch (ParseException e) {
-            e.printStackTrace();
-            date = new Date();
+        
+        Optional<Account> receiverAccountOptional = accountRepository.findById(receiverAccountId);
+        if (receiverAccountOptional.isPresent()) {
+            User receiver = receiverAccountOptional.get().getUser();
+            transaction.setReceiver(receiver);
+            transaction.setSender(sender);
+            transaction.setAmount(amount);
+            transaction.setTransactionDate(LocalDate.now());
+
+            sender.getSentTransactions().add(transaction);
+            receiver.getReceivedTransactions().add(transaction);
+
+            userRepository.save(sender);
+            userRepository.save(receiver);
+            transactionRepository.save(transaction);
         }
-        transaction.setTransactionDate(date);
-        transaction.setSender(sender);
-        User receiver = transaction.getReceiver();
-        List<Transaction> receivedList = receiver.getReceivedTransactions();
-        receivedList.add(transaction);
-        receiver.setReceivedTransactions(receivedList);
-        
-        List<Transaction> sentList = sender.getSentTransactions();
-        sentList.add(transaction);
-        sender.setSentTransactions(sentList);
-        
-        userRepository.save(receiver);
-        userRepository.save(sender);
-        transactionRepository.save(transaction);
     }
 }
