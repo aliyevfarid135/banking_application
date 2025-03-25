@@ -8,9 +8,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Data//LOMBOK
-@NoArgsConstructor//LOMBOK
-@AllArgsConstructor//LOMBOK
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 
     @Id
