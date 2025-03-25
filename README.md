@@ -10,7 +10,7 @@ This is a banking application built with Java, Spring Boot, and front-end techno
 - **Responsive UI**: The front-end is built with HTML, CSS, and JavaScript to create a user-friendly, responsive design.
 ## Getting Started
 
-### 1. Clone the Repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/banking-application.git
