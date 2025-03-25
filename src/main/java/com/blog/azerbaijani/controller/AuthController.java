@@ -19,12 +19,8 @@ public class AuthController {
 
     @GetMapping("/login")
     public String loginPage(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            model.addAttribute("alreadyLoggedIn", false);
-        } else {
-            model.addAttribute("alreadyLoggedIn", true);
-        }
+        boolean isAuthenticated = SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken;
+        model.addAttribute("alreadyLoggedIn", !isAuthenticated);
         return "login";
     }
 
@@ -36,15 +32,16 @@ public class AuthController {
 
     @PostMapping("/register")
     public String doRegister(@ModelAttribute User user, Model model) {
-        for (User u : userRepository.findAll()) {
-            if (u.getUsername().equals(user.getUsername())) {
-                model.addAttribute("usernameError", "Username already exists");
-                return "register";
-            } else if (u.getEmail().equals(user.getEmail())) {
-                model.addAttribute("emailError", "Email already exists");
-                return "register";
-            }
+        if (userRepository.existsByUsername(user.getUsername())) {
+            model.addAttribute("usernameError", "Username already exists");
+            return "register";
         }
+        
+        if (userRepository.existsByEmail(user.getEmail())) {
+            model.addAttribute("emailError", "Email already exists");
+            return "register";
+        }
+
         user.setIsPayment(false);
         userRepository.save(user);
         return "redirect:register?success";
