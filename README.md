@@ -13,4 +13,4 @@ This is a banking application built with Java, Spring Boot, and front-end techno
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/banking-application.git
+git clone https://github.com/aliyevfarid135/banking-application.git
